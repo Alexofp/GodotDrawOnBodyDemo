@@ -1,0 +1,138 @@
+[gd_scene load_steps=12 format=3 uid="uid://dtr682hg3esig"]
+
+[ext_resource type="Script" path="res://main_scene.gd" id="1_v0i0p"]
+[ext_resource type="PackedScene" uid="uid://colnwjjc4uer1" path="res://Mesh/my_body_joined.tscn" id="1_v1ad5"]
+[ext_resource type="Material" uid="uid://fghph3213ajl" path="res://bodyMat.tres" id="3_bnoby"]
+[ext_resource type="Texture2D" uid="uid://jsxas2jlwo6i" path="res://Mesh/MyBodyJoined_MyBody Substance Painter_Body_BaseColor.png" id="3_vyxqy"]
+[ext_resource type="Shader" path="res://UVShader.gdshader" id="4_ltb4g"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7ky8m"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_15uu2"]
+sky_material = SubResource("ProceduralSkyMaterial_7ky8m")
+
+[sub_resource type="Environment" id="Environment_pjxgw"]
+background_mode = 2
+sky = SubResource("Sky_15uu2")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="World3D" id="World3D_f5phf"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wgd7a"]
+render_priority = 0
+shader = ExtResource("4_ltb4g")
+shader_parameter/albedo = null
+shader_parameter/point_size = null
+shader_parameter/roughness = null
+shader_parameter/metallic_texture_channel = null
+shader_parameter/specular = null
+shader_parameter/metallic = null
+shader_parameter/uv1_scale = Vector3(1, 1, 1)
+shader_parameter/uv1_offset = null
+shader_parameter/uv2_scale = Vector3(1, 1, 1)
+shader_parameter/uv2_offset = null
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_eyp8j"]
+viewport_path = NodePath("UVRenderViewport")
+
+[node name="MainScene" type="Node3D"]
+script = ExtResource("1_v0i0p")
+bodyMat = ExtResource("3_bnoby")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_pjxgw")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.566219, 0.713826, -0.412127, 2.78059e-08, 0.5, 0.866025, 0.824255, -0.49036, 0.283109, 0, 0, 0)
+shadow_enabled = true
+
+[node name="MyBodyJoined" parent="." instance=ExtResource("1_v1ad5")]
+
+[node name="Body_006 NORMAL MAP CAN DELETE" parent="MyBodyJoined/rig/Skeleton3D" index="0"]
+surface_material_override/0 = ExtResource("3_bnoby")
+
+[node name="CameraCenter" type="Node3D" parent="."]
+transform = Transform3D(0.796678, 0, 0.604404, 0, 1, 0, -0.604404, 0, 0.796678, 0, 0.89214, 0)
+
+[node name="Camera3D" type="Camera3D" parent="CameraCenter"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.6129)
+current = true
+
+[node name="UVRenderViewport" type="SubViewport" parent="."]
+world_3d = SubResource("World3D_f5phf")
+use_hdr_2d = true
+
+[node name="MyBodyJoined" parent="UVRenderViewport" instance=ExtResource("1_v1ad5")]
+
+[node name="Body_006 NORMAL MAP CAN DELETE" parent="UVRenderViewport/MyBodyJoined/rig/Skeleton3D" index="0"]
+surface_material_override/0 = SubResource("ShaderMaterial_wgd7a")
+
+[node name="CameraCenter2" type="Node3D" parent="UVRenderViewport"]
+transform = Transform3D(0.796678, 0, 0.604404, 0, 1, 0, -0.604404, 0, 0.796678, 0, 0.89214, 0)
+
+[node name="Camera3D" type="Camera3D" parent="UVRenderViewport/CameraCenter2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.6129)
+current = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer"]
+offset_right = 100.0
+offset_bottom = 100.0
+texture = SubResource("ViewportTexture_eyp8j")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="TextureRect2" type="TextureRect" parent="CanvasLayer"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -300.0
+offset_top = -300.0
+grow_horizontal = 0
+grow_vertical = 0
+expand_mode = 2
+stretch_mode = 4
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/TextureRect2"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_vyxqy")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="DebugTextureRect" type="TextureRect" parent="CanvasLayer"]
+visible = false
+modulate = Color(1, 1, 1, 0.219608)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("ViewportTexture_eyp8j")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="CanvasLayer"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -75.0
+offset_right = 150.0
+grow_vertical = 0
+text = "Left click - paint
+Right click - camera
+1,2,3 - animations"
+
+[editable path="MyBodyJoined"]
+[editable path="UVRenderViewport/MyBodyJoined"]
